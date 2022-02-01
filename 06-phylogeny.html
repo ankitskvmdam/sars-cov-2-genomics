@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>SARS-CoV-2 Genomics</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+<link rel="stylesheet" href="assets/styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">UoC BioinfoTraining</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="101-setup.html">Setup</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Materials
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-intro.html">SARS-CoV-2 Genomics</a>
+    </li>
+    <li>
+      <a href="02-unix.html">Unix Command Line</a>
+    </li>
+    <li>
+      <a href="03-intro_ngs.html">Intro to NGS Data</a>
+    </li>
+    <li>
+      <a href="04-artic_nextflow.html">Consensus Assembly</a>
+    </li>
+    <li>
+      <a href="05-lineage_assignment.html">Lineages and Variants</a>
+    </li>
+    <li>
+      <a href="06-phylogeny.html">Phylogenetic Placement</a>
+    </li>
+    <li>
+      <a href="07-nextflow_conda_setup.html">Managing Software</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Resources
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="102-unix_cheatsheet.html">Unix Cheatsheet</a>
+    </li>
+    <li>
+      <a href="103-tools_and_resources.html">SARS-CoV-2 Resources</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/cambiotraining/sars-cov-2-genomics">Github</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="warning">
+  <font size="+1">
+    <b>These materials are under active development and not ready for teaching.</b>
+    </font>
+  </div>
+
+<div id="header">
+
+
+
+
+</div>
+
+
+<div id="building-a-phylogenetic-tree" class="section level1">
+<h1>Building a Phylogenetic Tree</h1>
+<div class="highlight">
+<p><strong>Questions</strong></p>
+<ul>
+<li>How can I align my consensus sequences against the reference genome?</li>
+<li>How can I build a phylogenetic tree from my consensus sequences?</li>
+<li>How can I place my consensus sequences in the global phylogeny?</li>
+</ul>
+<p><strong>Learning Objectives</strong></p>
+<ul>
+<li>Use the <em>MAFFT</em> software to produce a multiple sequence alignment from the consensus sequences.</li>
+<li>Understand the basics of how phylogeny trees are constructed using maximum likelihood methods.</li>
+<li>Describe what branch lengths represent in typical SARS-CoV-2 phylogenetic tree.</li>
+<li>Recognise the limitations and challenges in building phylogenies for SARS-CoV-2.</li>
+<li>Use the <code>fasttree</code> software to produce a tree from a modest number of sequences.</li>
+<li>Use <em>UShER</em> to place sequences in the global phylogeny.</li>
+</ul>
+</div>
+<!--
+## SARS-CoV-2 Phylogeny
+
+:::warning
+What we are covering in this section should be seen as an exploratory analysis and not overly interpreted. 
+Phylogenetic analysis involves the use of models of evolution, which can impact the outcome of the analysis. 
+What we cover here is based on recommendations from ...
+:::
+
+![](https://raw.githubusercontent.com/roblanf/sarscov2phylo/master/tree_image.jpg)
+
+We can download latest phylogeny [here](https://github.com/roblanf/sarscov2phylo/releases)
+
+There are two popular programs for building phylogenetic trees: `fasttree` and `iqtree`. 
+As an input, these programs need a FASTA file of the aligned sequences. 
+For now we can use the alignment we previously obtained from `pangolin`, but we will see alternatives and other considerations later on.
+
+One of the things to consider is to use the Wuhan reference sequence as an outgroup to root the tree. 
+Optionally, we can also add a collection of sequences from around the world (and across time) to contextualise our own samples in the global diversity. 
+
+### IQ-Tree
+
+From [here](https://github.com/roblanf/sarscov2phylo/issues/20#issuecomment-855319059):
+
+```bash
+iqtree2 -s aln.fasta -t NJ-R -n 0 -m GTR+R4 -nt 8 -blmin 0.00000000001
+```
+
+Although if we run with default options, it will use _ModelFinder Plus_ to identify best model (based on AIC):
+
+```bash
+iqtree -s aln.fasta -nt 8 -blmin 0.00000000001
+```
+
+This takes quite a while to run though. 
+
+
+### FastTree
+
+From [here](https://github.com/roblanf/sarscov2phylo/commit/55cbb8ddaddaceb2ecd0577f105a3fd37f13d304), I think these are run with performance in mind:
+
+```bash
+fasttree -nt -gamma -nosupport \
+  -sprlength 500 -nni 0 -spr 5 \
+  -refresh 0.8 -topm 1.5 -close 0.75 -noml \
+  "$INPUT_FASTA" > "$INPUT_FASTA"'1.multi.fasttree'
+    
+fasttree -nt -gamma -sprlength 200 -spr 5 -intree \
+  "$INPUT_FASTA"'1.multi.fasttree' \
+  "$INPUT_FASTA" > "$INPUT_FASTA"'multi.fasttree'
+```
+
+In this document there's a much simpler command, which is probably fine for the purpose of our course: 
+
+```bash
+fasttree -nt -nosupport input.fa > output.tree 2> output.log
+```
+
+**NOTE to self:** ran this with additional `-gtr` option and took 6 minutes. 
+
+- `-nt` for nucleotide alignment (default is protein alignment).
+- `-nosupport` to turn off support values (bootstrap) - it makes sense to turn this off, since we often have very few variable sites to bootstrap from.
+
+We can visualise the tree we just produced with _FigTree_. 
+We can also import the output from _Pangolin_ to annotate our tree by variant (**note:** unfortunately FigTree wants a TSV file, but pangolin exports CSV. I did this, but maybe there's a less confusing way to do this? `cat results/pangolin/run1_report.csv | sed 's/,/\t/g' > results/pangolin/run1_report.tsv`)
+
+
+:::note
+<details><summary>Installing `fasttree` and `iqtree`</summary>
+
+You can install both these programs using _Conda_ (more about this package manager in [Reproducible Workflows](08-nextflow_conda_setup.html)).
+For example, we can create a new environment called "phylogenetics" with both these programs as well as _FigTree_ (for tree visualisation).
+
+```console
+$ mamba create --name phylogenetics fasttree iqtree figtree
+```
+
+We can then activate this environment by running `conda activate phylogenetics`, making the programs available to use. 
+
+Note that _FigTree_ is also available on Windows and Mac (see the [software page](http://tree.bio.ed.ac.uk/software/figtree/) for download links).
+
+</details>
+:::
+
+
+:::exercise
+
+- Looking at the tree we just constructed, do you think the Delta variant emerged from the Alpha variant?
+- Produce a new phylogenetic tree but this time using both the sequences we processed and a sample of other public sequences that represent the global diversity of SARS-CoV-2 genomes. 
+  - First combine the two files into one (`cat`).
+  - Produce a combined annotation file with sequence name and lineage.
+  - Then run `fasttree` with the same settings we used before.
+- Visualise this new tree. Does your conclusion change?
+
+
+:::
+
+## Alignment
+
+- MAFFT is used [here](https://github.com/roblanf/sarscov2phylo/blob/master/scripts/global_profile_alignment.sh)
+- Pangolin uses minimap2 (see [docs](https://cov-lineages.org/resources/pangolin/usage.html))
+
+Visualising alignment: [AliView](https://ormbunkar.se/aliview/) is lightweight and fast. 
+[Nextstrain](https://clades.nextstrain.org) is probably the nicest because it includes the annotation.
+
+Should we mask gaps with N's? Actually, I think ML methods ignore gaps and treat them as N's anyway.
+
+
+## Problematic Sites
+
+- These can be found here: https://github.com/W-L/ProblematicSites_SARS-CoV2
+- more info here (note that not all sites in the VCF should be masked): https://virological.org/t/masking-strategies-for-sars-cov-2-alignments/480
+- This script shows how these are masked: https://github.com/roblanf/sarscov2phylo/blob/master/scripts/mask_alignment.sh
+- We could also use the more standard https://bedtools.readthedocs.io/en/latest/content/tools/maskfasta.html
+
+
+
+## Summary
+
+:::highlight
+
+**Key Points**
+
+- one
+- two
+
+:::
+-->
+</div>
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.img-container {
+  float: left;
+  width: 33.33%;
+  padding: 15px;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+</style>
+</head>
+<body>
+
+<hr>
+<div class="clearfix">
+  <div class="img-container">
+  <img src="assets/img/logo_btf.png" alt="UoC Bioinformatics Training Facility" style="width:100%">
+  </div>
+  <div class="img-container">
+  <img src="assets/img/logo_phe.png" alt="Public Health England" style="width:50%">
+  </div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

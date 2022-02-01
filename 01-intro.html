@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>SARS-CoV-2 Genomics</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+<link rel="stylesheet" href="assets/styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">UoC BioinfoTraining</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="101-setup.html">Setup</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Materials
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01-intro.html">SARS-CoV-2 Genomics</a>
+    </li>
+    <li>
+      <a href="02-unix.html">Unix Command Line</a>
+    </li>
+    <li>
+      <a href="03-intro_ngs.html">Intro to NGS Data</a>
+    </li>
+    <li>
+      <a href="04-artic_nextflow.html">Consensus Assembly</a>
+    </li>
+    <li>
+      <a href="05-lineage_assignment.html">Lineages and Variants</a>
+    </li>
+    <li>
+      <a href="06-phylogeny.html">Phylogenetic Placement</a>
+    </li>
+    <li>
+      <a href="07-nextflow_conda_setup.html">Managing Software</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Resources
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="102-unix_cheatsheet.html">Unix Cheatsheet</a>
+    </li>
+    <li>
+      <a href="103-tools_and_resources.html">SARS-CoV-2 Resources</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/cambiotraining/sars-cov-2-genomics">Github</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="warning">
+  <font size="+1">
+    <b>These materials are under active development and not ready for teaching.</b>
+    </font>
+  </div>
+
+<div id="header">
+
+
+
+
+</div>
+
+
+<div id="introduction-to-sars-cov-2-genomics" class="section level1">
+<h1>Introduction to SARS-CoV-2 Genomics</h1>
+<div class="warning">
+<p><strong>Dev note:</strong> some of these can probably be moved to the relevant sections later on. This section can be written at the end, but for now it’s useful to drop down notes. This will most likely not be a “practical” session, but rather a presentation (the materials serve as complementary reading material to the slides).</p>
+</div>
+<div class="highlight">
+<p><strong>Questions</strong></p>
+<ul>
+<li>How can genomic surveillance help with public health action?</li>
+<li>What protocols and technologies are used for SARS-Cov-2 genome sequencing?</li>
+<li>What factors should be considered when collecting samples for sequencing?</li>
+<li>What is the difference between a strain, a lineage, a clade and a variant?</li>
+<li>What are some of the main SARS-CoV-2 data repositories and projects?</li>
+</ul>
+<p><strong>Learning Objectives</strong></p>
+<ul>
+<li>Enumerate some examples of how the genomic surveillance of SARS-CoV-2 has impacted public health decisions during the ongoing pandemic.</li>
+<li>Contrast different sequencing technologies (e.g. Illumina and Nanopore) and protocols (e.g. amplicon, metagenomic, RNA-seq) commonly used for SARS-CoV-2 sequencing, including the pros and cons of each.</li>
+<li>Understand the steps involved in the widespread ARTIC protocol and the differences between its versions.</li>
+<li>List key metadata fields needed with each sample to make best use of the data and recognise some limitations related to privacy.</li>
+<li>Recognise what the main steps are in processing raw sequencing data to generate consensus genome sequences, including sequence alignment, primer trimming and consensus generation.</li>
+<li>Distinguish between the concept of a strain, a lineage, a clade and a variant (and describe why the concept of a variant is sometimes ambiguous).</li>
+<li>Describe the sources of information that can be obtained from GISAID, Pango, Nextstrain and the WHO nomenclature systems.</li>
+<li>Describe what a variant of concern (VOC) is and how it differs from a variant of interest (VOI).</li>
+</ul>
+</div>
+<!--
+## What is SARS-CoV-2?
+
+Very brief and general intro to coronavirus biology (see: https://www.nature.com/articles/s41586-021-04188-6)
+
+- genus betacoronavirus
+- phylogenetic context in relation to other viruses
+- SARS-CoV-2 spike protein (binds to human ACE2); its structure, e.g. receptor binding domain, furin-cleavage site
+  - mutations in spike protein might cause immune escape and/or vaccine inefficiency
+- current pandemic overview
+
+
+## Genomic Surveillance
+
+Figure 3 from this paper may be helpful: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7097748/
+
+- Applications from molecular epidemiology (see https://youtu.be/R4EoTEiAQNE)
+- Identification of variants of interest and variants of concern
+  - First notable mutation was A23403G (D614G AA substitution in the spike protein)   - increased virus infectivity and transmissibility
+  - Alpha (UK), Beta (South Africa), Gamma (Brasil), Delta (India), Omicron (South Africa)
+  - These variants often show reduced neutralisation against vaccine-elicited antibodies
+  - General description of these variants in Box 2 of https://www.nature.com/articles/s41586-021-04188-6#Sec11
+
+- SARS-CoV-2 sequencing is the largest genomic sequencing of a pathogen ever
+  - shed light on global (and local) transmission patterns
+  - factors associated with the fitness of the virus 
+  - identification of new variants of concern - affecting public health policy and travel restrictions 
+  - bias in sequencing efforts (UK + US contribute ~50% of all sequences)
+
+
+## GISAID (and others?)
+
+
+Variant classification: 
+
+- WHO (see their definition of VOC): https://www.who.int/en/activities/tracking-SARS-CoV-2-variants/
+
+
+## SARS-CoV-2 Sequencing
+
+- 29800bp genome
+- 2 mutations per month (probably replication errors)
+- Amplicon sequencing, Metagenomic approach, RNA-seq
+- Platforms: Illumina, Nanopore (pros and cons)
+
+First sequence and assembly: https://www.nature.com/articles/s41586-020-2012-7
+
+### ARTIC protocol
+
+The Artic Network aims at providing the community with a standardized set of tools and operating procedures to process viral sequence data. 
+In particular, the community developed a pipeline to try and standardise the processing of SARS-CoV-2 variants. 
+
+- Overview of the ARTIC project 
+- ARTIC sample prep protocol (amplicon sequencing; primer versions)
+  - Nice fig 1 to illustrate library prep https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-020-07283-6
+  - Nanopore or Illumina? 
+    - Nanopore is fast, relatively cheap, up to 96 samples per flowcell, portable; contamination risk (if washing and re-running)
+    - Illumina is higher-throughput, lower error rates, cheaper per sample
+
+
+## Brief Intro to Sequencing
+
+Maybe a brief overview of the pipeline (only intuitive, no tools mentioned) to motivate the steps that come after.
+
+
+## Sample Collection
+
+Which samples to sequence? 
+
+- Samples with Ct > 30 may not be worth sequencing as their genome completeness is likely going to be low (see plot at [12:30 of this video](https://youtu.be/Fb-SID2DlB0?t=760))
+- Negative controls 
+
+
+### Metadata
+
+- This manuscript indicates which metadata is needed for public databases: https://www.preprints.org/manuscript/202008.0220/v1 
+  - The accompanying repository has useful templates and mappings between the fields for different databases (e.g. GISAID, GENBANK, SRA)
+  - There's a bunch of protocols.io for submitting to each of these databases
+- not all metadata needs to be shared publicly - this may help collaborators share information if they know that some of those data will not be publicly shared 
+
+Minimal metadata: 
+
+- Geolocation
+- Date of collection
+- Date of sequencing
+- Ct value (proxy for viral load); Ct > 30 is very high (low virus amount resulting in low coverage)
+
+Metadata is crucial for example for epidemiological analysis (without known "person, place, time" it's hard to infer anything about the dynamics of transmission of the virus from the genomic data)
+
+
+## Nomenclature 
+
+Need to clarify (see [notes](notes.md) on Aine O'Toole's talk): 
+
+- Strain
+- Clades
+- Lineages
+- Variants
+  - this one is a little ambiguous and we should clarify
+
+
+## Key Bioinformatic Skills 
+
+To link with next sessions, cover the main bioinformatic skills we need to acquire in order to achieve our main goal of producing an actionable report for SARS-CoV-2 genomic surveillance.
+
+- Unix 
+- Conda and Nextflow
+- ARTIC pipeline
+
+
+## Summary
+
+:::highlight
+**Key Points**
+
+- one
+- two
+- three
+
+:::
+-->
+</div>
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.img-container {
+  float: left;
+  width: 33.33%;
+  padding: 15px;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+</style>
+</head>
+<body>
+
+<hr>
+<div class="clearfix">
+  <div class="img-container">
+  <img src="assets/img/logo_btf.png" alt="UoC Bioinformatics Training Facility" style="width:100%">
+  </div>
+  <div class="img-container">
+  <img src="assets/img/logo_phe.png" alt="Public Health England" style="width:50%">
+  </div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
